@@ -1,4 +1,5 @@
 @extends('templates.main')
+<!-- реєстрація -->
 @section('body')
    <div class="row mt-4">
       @if (session()->has('success'))

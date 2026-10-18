@@ -1,4 +1,5 @@
 @extends('templates.main')
+<!-- вхід -->
 @section('body')
    <div class="row mt-4">   
       <form action="{{route('login.action')}}" method="POST">

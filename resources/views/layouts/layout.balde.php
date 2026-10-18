@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    привет
+    привіт
 
     @yield('laravel')
 </body>

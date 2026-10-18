@@ -1,25 +1,28 @@
 @extends('templates.main')
 @section('body')
    <div class="row mt-4">
-          {{-- @dd($grib->id)  @dd($grib->GribNames[0]->Language)   @dd($grib->Description[0]->Description) @dd($Description_['Description'])  --}}
+          {{-- @dd($grib->id)   @dd($grib->GribNames[0]->GribName) @dd($grib->GribNames[0]->Language)   @dd($grib->Description[0]->Description) @dd($Description_['Description'])  --}}
           
       <h3 class="mb-3"> Update "{{$grib->GribNames[0]->GribName   ??  NULL }}"</h3>
-         <form action="{{route('grib.update', ['grib'=>$grib->id])}}" method="POST" enctype='multipart/form-data'>
+         <form action="{{route('gribs.update', ['grib'=>$grib->id])}}" method="POST" enctype='multipart/form-data'>
       <!-- enctype='multipart/form-data' обяз атрибут для отправки файлов(52 ЗАГРУЗКА ФАЙЛОВ 2:10) -->
       @csrf
       <!-- см 51 Отправка форм -->
+
+    
       @foreach ( $grib->GribNames as $GribName)
-        <div class="d-flex mb-3 bd-highlight">
-            <div class="form-group">
-               <select name="Name[{{ $GribName->id }}][Language]" value="" class="form-control @error('Language') is-invalid  @enderror" id="Language">
+         <div class="d-flex mb-3 bd-highlight">
+            <div class="form-group">         
+            <input style="width: 42px;" readonly name="Name[{{ $GribName->id }}][Language]" value="{{ $GribName->Language }}" class="form-control @error('Language') is-invalid  @enderror" id="Language">
+               <!-- <select name="Name[{{ $GribName->id }}][Language]" value="" class="form-control @error('Language') is-invalid  @enderror" id="Language">
                   <option>{{ $GribName->Language }}</option>
                   <option>ua</option>
                   <option>ru</option>
-                  <option>en</option>
-               </select>
+                  <option>la</option>
+               </select> -->
             </div>
             <input type="text" name="Name[{{ $GribName->id }}][Name]" value="{{ $GribName->GribName }}" class="form-control @error('GribName') is-invalid  @enderror" id="GribName">
-       </div>
+         </div>
          @error('GribName')
          <div id="validationCustom03" class="invalid-feedback">
             {{ $message }}  {{-- можно вывести на русском (см видео)  --}}
@@ -27,21 +30,15 @@
          @enderror
        @endforeach 
        
+       
+
        @foreach ( $grib->Description as $Description_)
         <div class="d-flex mb-3 bd-highlight">
            <div class="form-group">
-               <select name="Description[{{ $Description_->id }}][Language]" value="" class="form-control @error('Language') is-invalid  @enderror" id="Language">
-                  <option>{{ $Description_->Language }}</option>
-                  <option>ua</option>
-                  <option>ru</option>
-                  <option>en</option>
-               </select>
-            </div>
-            <textarea name="Description[{{ $Description_->id }}][Description]" id="text" rows="10" cols="80"><?= $_POST['Description'] ?? $Description_['Description'] ?></textarea><br> -->
-            <!-- <input type="text" name="Description" value="{{ old('Description', $Description_['Description']) }}" class="form-control @error('GribName') is-invalid  @enderror" id="GribName"> -->
-          </div>
-            <!-- <textarea name="Description" value="{{ old('Description', $Description_['Description']) }}" class="form-control @error('Description') is-invalid  @enderror" id="Description"></textarea> 
-            <textarea name="text" id="text" rows="10" cols="80"><  убрати пробіли ?= $_POST['Description'] ?? $Description_['Description'] ?></textarea><br> -->
+           <input style="width: 42px;" readonly name="Description[{{ $Description_->id }}][Language]" value="{{ $Description_->Language }}" class="form-control @error('Language') is-invalid  @enderror" id="Language">
+           </div>
+           <textarea name="Description[{{ $Description_->id }}][Description]" id="text" rows="10" cols="80"><?= $_POST['Description'] ?? $Description_['Description'] ?></textarea><br> 
+         </div>
             {{-- |в textarea почему-то  old не работает| --}}
          @error('Description')
          <div id="validationCustom03" class="invalid-feedback">
@@ -50,23 +47,23 @@
          @enderror
        @endforeach 
       
+
       <div class="mb-3">
          <img height='100' src={{ $grib->GribImage[0]->GribImage ?? 'https://tryndiani.com.ua/img/instrumenty/1.jpg' }} class="d-block mb-3" alt="if не сработало" width='100'>
-                  <label for="preview" class="form-label">Preview</label>
-         <input type="file" name="preview" class="form-control @error('preview') is-invalid  @enderror"  id="preview" value="{{ old('file') }}">
+                  <label for="preview" class="form-label">GribImage</label>
+         <input type="file" name="GribImage" class="form-control @error('GribImage') is-invalid  @enderror"  id="GribImage" value="{{ old('file') }}">
                   {{-- |почему-то  old не работает| --}}
       </div>
-
-         @error('preview')
+         @error('GribImage')
          <div id="validationCustom03" class="invalid-feedback">
             {{ $message }}
          </div>           
          @enderror
 
          <div class="mb-3">
-         <img height='100'src={{ $article->preview_image ?? 'https://tryndiani.com.ua/img/instrumenty/1.jpg' }} class="d-block mb-3" alt="if не сработало" width='100'>
+         <img height='100'src={{ $grib->GribImage[0]->GribImage_preview ?? 'https://tryndiani.com.ua/img/instrumenty/1.jpg' }} class="d-block mb-3" alt="if не сработало" width='100' >
          <label for="preview" class="form-label">Preview</label>
-         <input class="form-control @error('preview') is-invalid  @enderror" name="preview" type="file" id="preview" value="{{ old('file') }}">
+         <input type="file" name="preview" class="form-control @error('preview') is-invalid  @enderror"   id="preview" value="{{ old('file') }}">
                   {{-- |почему-то  old не работает| --}}
       </div>
          @error('preview')

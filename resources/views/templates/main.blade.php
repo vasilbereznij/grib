@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
-
+<!-- основний каркас сайту -->
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,6 +9,7 @@
     <meta name="description" content="Сайт для практического быстрого определения распространенных грибов.">
     <title>Определитель грибов</title>   
   <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}">
+  <link rel="stylesheet" href="{{asset('assets/css/app.css')}}">
   <script src="{{asset('assets/css/bootstrap.min.js')}}" defer>	</script>
 </head>
 

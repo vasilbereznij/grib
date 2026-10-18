@@ -19,7 +19,6 @@ return new class extends Migration
             $table->smallInteger('Type1')->nullable()->comment('тип напр: 1-шляпочный 2-шаровидный 3-Граната 4-Другие');
             $table->string('Title')->nullable();
             $table->text('Description')->nullable()->comment('описание');
-
             $table->timestamps();
         });
     }

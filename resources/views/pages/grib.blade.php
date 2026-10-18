@@ -36,7 +36,7 @@
     <div class="btn-group">
          {{-- @dd($grib->id)  --}}
         <a href="{{ route('grib.page.egit', ['grib' => $grib->id])}}" class="btn btn-success">Edit</a>
-        <Form action="{{ route('grib.delete',['grib' => $grib->id]) }}" method="POST">
+        <Form action="{{ route('gribs.delete',['grib' => $grib->id]) }}" method="POST">
             @csrf
         <button type="submit" class="btn btn-danger">Delete</button>    
         </Form>

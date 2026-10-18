@@ -21,32 +21,42 @@ use App\Http\Controllers\Application\LoginController;
 // адрес http://127.0.0.1:8000/адрес
 // http://127.0.0.1:8000/grib
 // Route::get('/', [PagesController::class, 'grib'])->name('grib'); - для одного контр.
-Route::controller(PagesController::class)->group(function () {
-    Route::get('/', 'hello')->name('hello');
-    Route::get('/grib', 'selection')->name('selection');
-    Route::get('/gribs', 'gribs')->name('gribs');
-    Route::get('grib/create', 'CreateGribForm')->name('grib.page.create');
-    // Route::get("articles/create", 'CreateArticleForm')->name('article.page.add')->middleware('auth');
-    Route::get('grib/{grib}', 'ShowGrib')->name('grib');
+Route::controller(PagesController::class)->group(function () {  //відкриває сторінку
+    Route::get('/', 'hello')->name('hello'); //Заходьте, будь ласка!    http://grib
+    //Route::get('gribs/create', 'CreateGribForm')->name('grib.page.create')->middleware('auth'); // створити /лише авторизовані  http://grib/grib/create
+    //Route::get('gribs/create', 'CreateGribForm')->name('grib.page.add'); // створити /лише авторизовані  http://grib/grib/create
+    Route::get('gribs/create', 'CreateGribForm')->name('grib.page.add')->middleware('auth'); // створити /лише авторизовані  http://grib/grib/create
+    // посредник App\Http\Middleware\Authenticate.php дает ошибку: нужно изменить имя страницы в нем return route('login') на return route('login.form')  
+    /////Route::get("gribs/create", 'CreateGribForm')->name('grib.page.add')->middleware('auth');
+   
+   
+    Route::get('/gribs/{category}', 'selection')->name('selection'); //головна ?? ДОРОБИТИ вибір??    http://grib/grib
+    Route::get('/gribs', 'gribs')->name('gribs');  // Перегляд всіх http://grib/gribs
+    // Route::get('/categories', 'categories')->name('categories');
+    Route::get('grib/{grib}', 'ShowGrib')->name('grib');  // перегляд одного з кнопками редагування   http://grib/grib/1
     // Route::get("articles/{article}", 'ShowArticle')->middleware('article.is_public')->name('article');
-    Route::get('grib/{grib}/edit', 'EditGribForm')->name('grib.page.egit');
-    Route::get('/about', 'about')->name('about');
-    Route::get('/security', 'security')->name('security');
+    // посредник 'article.is_public' нужно создать и зарегистрировать (app\Http\Middleware\Articles\IsPubicMiddlevare.php)
+    Route::get('gribs/{grib}/edit', 'EditGribForm')->name('grib.page.egit')->middleware('auth'); // редагувати /лише авторизовані
+    Route::get('/about', 'about')->name('about');  //Про сайт  http://grib/about
+    Route::get('/security', 'security')->name('security');  //Безпека  http://grib/security
 });
 
-Route::controller(gribsController::class)->group(function () {
+Route::controller(gribsController::class)->middleware('auth')->group(function () {          //записує в БД
     Route::post('grib/create', 'create')->name('grib.create');
-    Route::post("grib/{grib}/update", 'update')->name('grib.update');
-    Route::post("grib/{grib}/delete", 'delete')->name('grib.delete');    
+    Route::post("gribs/{grib}/update", 'update')->name('gribs.update');
+    Route::post("gribs/{grib}/delete", 'delete')->name('gribs.delete');
+    //Route::post("articles/{article}/comment", 'comment')->name('articles.comment');
+    // 51 Отправка форм
+    // php artisan make:controller Application/ArticlesController
 });
 
-// посредник middleware('guest', '...', ...) не пускает авторизированных пользователей(переадресует на /home) / файл ...app\Http\Kernel.php 
+// посредник middleware('guest', '...', ...) не пускає не авторизированных пользователей(переадресует на /home) / файл ...app\Http\Kernel.php 
 Route::controller(RegisterController::class)->middleware('guest')->group(function () {
     Route::get("/register", 'index')->name('register.form');
     Route::post("/register", 'register')->name('register.action');
 });
 
-Route::controller(LoginController::class)->middleware('guest')->group(function () {  // посредник на всю группу/ пускает только гостей
+Route::controller(LoginController::class)->middleware('guest')->group(function () {  // посредник на всю группу/ пускає тільки гостей
     // Route::controller(LoginController::class)->group(function () {
     Route::get("/login", 'index')->name('login.form');
     // Route::get("/login", 'index')->name('login.form')->middleware('guest'); // если посредник нужен на один роутер
@@ -66,23 +76,3 @@ Route::controller(LoginController::class)->middleware('guest')->group(function (
 //     return "<H3 style='color:red'>User is not found!</H3>";
 // });
 
-// //// группируем (упрощаем) запись:
-// Route::controller(ApplicationPagesController::class)->group(function () {
-//     Route::get('/', 'hello')->name('hello');
-//     Route::get("/articles", 'articles')->name('articles');
-//     Route::get("articles/create", 'CreateArticleForm')->name('article.page.add')->middleware('auth');
-//     // посредник App\Http\Middleware\Authenticate.php дает ошибку: нужно изменить имя страницы в нем return route('login') на return route('login.form')  
-//     Route::get("articles/{article}", 'ShowArticle')->middleware('article.is_public')->name('article');
-//     // посредник 'article.is_public' нужно создать и зарегистрировать (app\Http\Middleware\Articles\IsPubicMiddlevare.php)
-//     Route::get("articles/{article}/edit", 'updateArticleForm')->name('article.page.egit');
-// });
-// // 51 Отправка форм
-// //  php artisan make:controller Application/ArticlesController
-// Route::controller(ArticlesController::class)->middleware('auth')->group(function () {
-//     // Route::get('/', 'hello')->name('hello');
-//     // Route::get("/articles", 'articles')->name('articles');
-//     Route::post("articles/create", 'create')->name('articles.create');
-//     Route::post("articles/{article}/update", 'update')->name('articles.update');
-//     Route::post("articles/{article}/delete", 'delete')->name('articles.delete');
-//     // Route::get("articles/{article}", 'ShowArticle')->name('article');
-// });

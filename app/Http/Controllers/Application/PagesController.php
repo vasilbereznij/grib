@@ -19,10 +19,14 @@ class PagesController extends Controller
         return view('pages.hello');
     }
 
-    public function selection()
+    public function selection( $Type0)
     {
-        $selection = category::get(); //отбор и запрос в БД /выводит все записи/ first() -первую найденную
-        // @dd($selection);
+        dd('categories13');
+              // @dd($Type0);
+        $selection = category::where('Type0', $Type0)
+        ->get(); //отбор и запрос в БД /выводит все записи/ first() -первую найденную
+        //  $selection = category::get(); //отбор и запрос в БД /выводит все записи/ first() -первую найденную
+        //  @dd($selection);
         $image = image::get();
         // @dd($image);
         // $gribs = grib::where('is_public', true)
@@ -37,6 +41,7 @@ class PagesController extends Controller
 
     public function gribs()
     {
+        // dd('categories12');
         // $image = image::get();
         $gribs = grib::where('is_public', true)
             ->orderBy('id', 'desc')
@@ -53,24 +58,56 @@ class PagesController extends Controller
         ]);
     }
 
+    public function categories()
+    {
+        // dd('categories11');
+        // $image = image::get();
+        $categories = category::orderBy('id', 'desc')
+            ->get(); //отбор и запрос в БД /выводит все записи/ first() -первую найденную
+        //  dd($gribs);
+        // dd($gribs[1]->id);
+        // dd(name::where('gribs_id', $gribs[1]->id)->get());
+        // dd(name::where('gribs_id', $gribs[1]->id)->get());
+
+        return view('pages.categories', [
+            'categories' => $categories
+            // ,'GribName' => name::where('gribs_id', $gribs->id)->get(),
+            // 'GribImage' => image::where('gribs_id', $gribs->id)->get()
+        ]);
+    }
+
+
+
+
+
     public function CreateGribForm()
     {
-        return view('pages/gribCreate');
+                //   dd('categories');
+        return view('pages/grib_create');
     }
+
+    public function create()
+    {
+                //   dd('categories1');
+        return view('pages/grib_create');
+    }
+
     public function about()
     {
+        // dd('categories3');
         return view('pages/about');
     }
 
     public function security()
     {
+        // dd('categories2');
         return view('pages/security');
     }
 
 
-    public function ShowGrib(grib $grib) //тип ...(Article $... лучше указывать явно |БРОМ: Посредники 22:26|
+    public function ShowGrib(Grib $grib) //тип ...(Article $... лучше указывать явно |БРОМ: Посредники 22:26|
     {
-  
+      //  dd($grib);
         return view('pages.grib', [
             'grib' => $grib,
             'comments' => Comment::where('grib_id', $grib->id)->get(),
@@ -103,6 +140,7 @@ class PagesController extends Controller
     //     }
     public function EditGribForm(grib $grib)
     {
+                // dd('EditGribForm');
         return view('pages.grib_edit', [
             'grib' => $grib
         ]);

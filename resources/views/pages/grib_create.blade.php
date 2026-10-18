@@ -1,4 +1,5 @@
    @extends('templates.main')
+   <!-- створити  -->
    @section('body')
       <form action="{{route('grib.create')}}" method="POST" enctype='multipart/form-data'>
       <!-- enctype='multipart/form-data' обяз атрибут для отправки файлов(52 ЗАГРУЗКА ФАЙЛОВ 2:10) -->

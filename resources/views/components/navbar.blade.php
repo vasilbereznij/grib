@@ -1,6 +1,8 @@
 <nav id="w0" class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
-            <a class="navbar-brand" href="/">Navbar</a>
+
+        <a class="navbar-brand" href="/"><img class="logo" src="/storage/grib/previews/logo.png" alt="Логотип"></a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -8,16 +10,17 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{route('selection')}}">Главная</a>
+                    <!-- <a class="nav-link active" aria-current="page" href="{ {route('selection')}}">Головна</a> -->
+                    <a class="nav-link active" aria-current="page" href="/gribs/0">Головна</a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="/about">О сайте</a></li>
-                <li class="nav-item"><a class="nav-link" href="/security">Безопасность</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{route('gribs')}}">Просмотр всех</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">Про сайт</a></li>
+                <li class="nav-item"><a class="nav-link" href="/security">Безпека</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{route('gribs')}}">Перегляд всіх</a></li>
                                 
                 @if (auth()->check())
                     <li class="nav-item">
-                        {{-- <a class="nav-link" href="{{route('article.page.add')}}">Article Add</a> --}}
-                        <a class="nav-link" href="grib/create">Grib Add</a>
+                        <a class="nav-link" href="{{route('grib.page.add')}}">Grib Add</a>
+                        <!-- <a class="nav-link" href="grib/create">Grib Add</a> -->
                     </li>    
                 @endif
             </ul>

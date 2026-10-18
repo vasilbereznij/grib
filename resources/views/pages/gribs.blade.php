@@ -1,4 +1,5 @@
 @extends('templates.main')
+<!-- всі гриби -->
 @section('body')
 <div class="row row-cols-3 row-cols-md-3 g-4 mt-1">
     @foreach($gribs as $grib) 

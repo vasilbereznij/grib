@@ -121,12 +121,16 @@
  4.проверяем/отлаживаем элементарную работу одной формы: чтение/запись в БД (51 Отправка форм)
  4а.если нужно получить файл из формы:
  вставить в нее обяз атрибут для отправки файлов enctype='multipart/form-data' (ЗАГРУЗКА ФАЙЛОВ 2:10)
- и получить путь, например, в контроллере:
+ получить путь, и загрузить в каталог (например )например, в контроллере:
+ <?php
  if ($request->hasFile('preview')) {
  $previewImagePats = "/storage/{$request->file("preview")->store('grib/previews', ['disk' => 'public'])}";
- }
- 4b.Для чтения файлов изменяем публичный маршрут: php artisan storage:link
+ //команда $request->file("preview")->store('grib/previews', ['disk' => 'public'])-  завантажує файл в каталог ($request->файл->store(каталог) |grib/previews/Tj7K...X.jpg|
+ }   ?>
+ 
+ 4b.Для чтения файлов изменяем публичный маршрут: php artisan storage:link 
  ответ: INFO The [D:\project\grib\public\storage] link has been connected to [D:\project\grib\storage\app/public].
+ (прописує посилання на storage/app/public/grib/previews в папку public/storage/grib....)
  (ЗАГРУЗКА ФАЙЛОВ 16:01)/ без цього не буде видно рисунків
 
  5.Создаем Кастомные Request (проверяет введенные пользователем значения) //см.Валидация https://laravel.com/docs/9.x/validation
