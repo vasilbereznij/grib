@@ -1,7 +1,8 @@
  в CMD выполнить:
  проверить версию: composer --version (если нет- скачать и установить)
  проверить версию PHP: php -v (если нет- установить Open Server и прописать в PATH путь к каталогу с PHP)
- перейти в каталог проектов: cd project (cd /d/project)
+ перейти в каталог проектов: 
+ (в корневий cd /   на каталог вище cd ..  прочитати каталог ls нижче - cd project (cd /d/project) )
 
  инсталл Laravel( ):
  composer create-project laravel/laravel grib
@@ -13,7 +14,6 @@
  сервер запущен по адресу http://127.0.0.1:8000 (доступна стартовая страница)
  ( INFO Server running on [http://127.0.0.1:8000]. )
  останов: Ctrl+C (Press Ctrl+C to stop the server )
-
  обновление Laravel:
  composer update
 
@@ -122,18 +122,25 @@
  4а.если нужно получить файл из формы:
  вставить в нее обяз атрибут для отправки файлов enctype='multipart/form-data' (ЗАГРУЗКА ФАЙЛОВ 2:10)
  получить путь, и загрузить в каталог (например )например, в контроллере:
- <?php
  if ($request->hasFile('preview')) {
  $previewImagePats = "/storage/{$request->file("preview")->store('grib/previews', ['disk' => 'public'])}";
  //команда $request->file("preview")->store('grib/previews', ['disk' => 'public'])-  завантажує файл в каталог ($request->файл->store(каталог) |grib/previews/Tj7K...X.jpg|
- }   ?>
- 
+ } 
  4b.Для чтения файлов изменяем публичный маршрут: php artisan storage:link 
  ответ: INFO The [D:\project\grib\public\storage] link has been connected to [D:\project\grib\storage\app/public].
  (прописує посилання на storage/app/public/grib/previews в папку public/storage/grib....)
  (ЗАГРУЗКА ФАЙЛОВ 16:01)/ без цього не буде видно рисунків
+ // сохранить переданный файл в каталог 'learning\storage\app\aticle\previews'
+            //(каталог 'STORAGE'  - место для хранения разных файлов
+            //(настройка путей в файле config/filesystems.php и переменной FILESYSTEM_DISK=... файл '.env' )
+    $request->file("preview")->store('aticle/previews');
+            //если нужен внешний доступ, подкаталог должен быть : learning\storage\app\public, тогда:
+            $request->file("preview")->store('aticle/previews', [
+                'disk' => 'public'
+            ]);
+            // (или FILESYSTEM_DISK=public в файле '.env'
 
- 5.Создаем Кастомные Request (проверяет введенные пользователем значения) //см.Валидация https://laravel.com/docs/9.x/validation
+ 5.Создаем Кастомные Request (проверяет введенные пользователем значения) //см.Валидация https://laravel.com/docs/9.x/validation и БРОМ: Роутинг 19:02 https://www.youtube.com/watch?v=EYsBkNzREtw&list=PLQ2eyErB1Ejx1W4h6jg_EU4JgpkYD5KhN&index=49
  php artisan make:request Grib/createRequest
  проверяем
  аналогично остальные
@@ -176,3 +183,91 @@
             'is_public' => !empty($request->input('is_public')),
             'preview_image' => $previewImagePats ?? null,
         ]);
+------------------------------------------------------------
+API і REST
+------------------------------------------------------------- 
+програма Postman — для розробки і тестування API
+в Postman створюємо папку окрему для кожного проекту (для великих-з підпапками),
+в яку поміщаємо GET-запроси.
+шлях до серверу вводимо через змінну напрмиклад 
+{{blog}}/api/articles , де blog=http://127.0.0.1:8000 (справа вгорі "No Environment variables")
+---------------
+шлях до API визначається в файлі \app\Providers\RouteServiceProvider.php (35стр)
+маршрути такі самі як і для WEB, але з іншим змістом(..\routes\api.php),
+------------
+створюємо окремі контроллери для API в окремий каталог з підкаталогами, наприклад /V1,  /V2 (версія1, версія2) і тд.:
+php artisan make:controller Api/v1/ArticlesController
+php artisan make:controller Api/v1/CommentsController  
+===============
+GET
+===============
+в контроллерах створюємо методи:
+public function list()
+    {
+        return 'hello';
+    }
+------------
+в файл api.php прописуєм контроллери:
+use App\Http\Controllers\Api\v1\ArticlesController;
+і роути
+
+Route::controller(ArticlesController::class)->group(function(){
+    Route::get('articles', "list");   
+   });
+(як варіант:можна добавити префікс:
+Route::controller(ArticlesController::class)->prefix('articles')->group(function(){
+    Route::get('/', "list");
+    Route::get('/{article}', "show")
+        ->middleware('article.is_public');
+    Route::POST('/', "create");
+   });
+)
+===============
+POST
+===============
+інформацію для передачі вводимо на вкладці 'body'/form-data
+-----------------
+ОБРОБКА ПОМИЛОК, напр в middleware:
+<?php
+        if (!$article->IsPubic()) {
+            if (str_contains(request()->route()->getPrefix(),'api')){  // если в префиксе есть 'api' 
+                return response()->json(['message'=> 'No acces'], 403);    //выводим не 403 а 'No acces' и $status=403
+            }
+            return abort(403);
+        }
+?>            
+(Список кодів тут: https://ru.wikipedia.org/wiki/Список_кодов_состояния_HTTP)
+-----------------
+ВАЛІДАЦІЯ
+створюємо request API для валідації:
+php artisan make:request Api/Articles/StoreRequest
+він наслідується від FormRequest, але краще для цього створити окремий: см БРОМ: REST POST 30:05
+php artisan make:request Api/ApiRequest  
+де вбиваємо весь зміст class ApiRequest і перевизначаємо:
+class ApiRequest extends FormRequest
+{
+   protected function failedValidation(Validator $validator)
+   {
+    parent::failedValidation($validator);
+   }
+}   
+відповідно в StoreRequest вказуємо:
+class StoreRequest extends ApiRequest
+-----------
+міняємо в контроллері 
+ public function create(Request $request) ..... 
+на 
+public function create(StoreRequest $request)  {  
+    $article = Article::query()->create($request->all());  //запис в БД
+    return response()->json([$this->show($article)], 201); //// читаємо(перевіряємо) для себе або отримання id /повертає $status=201(Created («создано»))
+}
+-------------------
+COMMENTS
+php artisan make:request Api/Comments/StoreRequest
+інформацію для передачі вводимо на вкладці 'body'/raw/JSON
+{ 
+    "username" : "Ivan"),
+    "body" : "text body"
+}
+
+return $article -> comments()->create($request->validated());  
